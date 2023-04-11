@@ -1,5 +1,3 @@
-# requirements : mouse, keyboard, clipboard
-
 import mouse
 import keyboard
 import random
