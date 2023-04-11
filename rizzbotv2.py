@@ -8,7 +8,7 @@ class RizzBot:
     def __init__(self, target, posing_time = 0, lines = []):
         self.target = target
         self.lines = lines
-        self.movements = (0, 0, 0, 0)
+        self.movements = [0, 0, 0, 0]
         self.working = False
         self.posing_time = posing_time
 
@@ -29,27 +29,31 @@ class RizzBot:
              range(len(self.movements))])
 
     def snap(self):
-        if self.is_calibrated():
-            wait(self.posing_time)
-            click_to(self.movements[0:2])
-            keyboard.write(self.target)
-            wait(0.4)
-            click_to(self.movements[2:])
+        if not self.is_calibrated():
+            raise RuntimeError("RizzBot was not calibrated!")
+
+        wait(self.posing_time)
+        click_to(self.movements[0:2])
+        keyboard.write(self.target)
+        wait(0.4)
+        click_to(self.movements[2:])
 
     def snap_wtext(self):
-        if self.is_calibrated():
-            wait(self.posing_time)
-            text_pos = mouse.MoveEvent(self.movements[0].x,
-                                       random.randint(self.movements[2].y - 100,
-                                                      self.movements[1].y - 40), 10)
-            click_to([self.movements[0], text_pos])
-            rdm = random.choice(self.lines)
-            clipboard.copy(rdm)
-            keyboard.send("ctrl+v")
-            wait(0.5)
-            click_to([self.movements[1]])
-            keyboard.write(self.target)
-            click_to(self.movements[2:])
+        if not self.is_calibrated():
+            raise RuntimeError("RizzBot was not calibrated!")
+
+        wait(self.posing_time)
+        text_pos = mouse.MoveEvent(self.movements[0].x,
+                                   random.randint(self.movements[2].y - 100,
+                                                  self.movements[1].y - 40), 10)
+        click_to([self.movements[0], text_pos])
+        rdm = random.choice(self.lines)
+        clipboard.copy(rdm)
+        keyboard.send("ctrl+v")
+        wait(0.5)
+        click_to([self.movements[1]])
+        keyboard.write(self.target)
+        click_to(self.movements[2:])
 
     def start(self, with_text = False):
         self.working = True
