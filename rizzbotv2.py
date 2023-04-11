@@ -10,7 +10,7 @@ class RizzBot:
     def __init__(self, target, posing_time = 0, lines = []):
         self.target = target
         self.lines = lines
-        self.movements = [0, 0, 0, 0]
+        self.movements = (0, 0, 0, 0)
         self.working = False
         self.posing_time = posing_time
 
