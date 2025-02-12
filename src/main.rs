@@ -1,7 +1,10 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod input_manager;
+
 use device_query::{DeviceQuery, DeviceState, MouseState};
 use eframe::egui;
+use input_manager::send_snap;
 use std::sync::mpsc;
 use std::thread;
 use std::time::Duration;
@@ -29,7 +32,7 @@ fn main() -> eframe::Result {
                 let _ = tx.send(mouse.coords);
             }
             old_button_pressed = mouse.button_pressed[1];
-            thread::sleep(Duration::from_millis(10));
+            thread::sleep(Duration::from_millis(5));
         }
     });
 
@@ -43,7 +46,7 @@ fn main() -> eframe::Result {
 struct RizzBotApp {
     calibrated: bool,
     rx: mpsc::Receiver<(i32, i32)>,
-    calibration_points: Vec<(i32, i32)>,
+    calibration_points: Vec<(i32, i32)>, // TODO: use a fixed size array?
 }
 
 impl RizzBotApp {
@@ -83,6 +86,12 @@ impl eframe::App for RizzBotApp {
             if self.calibrated {
                 for point in &self.calibration_points {
                     ui.label(format!("Point: ({}, {})", point.0, point.1));
+                }
+                if ui.button("Send Snap").clicked() {
+                    for _ in 0..10 {
+                        thread::sleep(Duration::from_millis(400));
+                        send_snap(&self.calibration_points, "Logan");
+                    }
                 }
             }
         });
